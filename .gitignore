@@ -1,0 +1,14 @@
+# Archivos Python/Django
+*.pyc
+__pycache__/
+*.pyo
+.env
+db.sqlite3  # No subas la BD local
+
+# Virtualenv
+venv/
+env/
+
+# IDE
+.vscode/settings.json
+.idea/
