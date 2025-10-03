@@ -1,0 +1,250 @@
+/**
+ * Estilos personalizados para GestPyLab
+ * Sistema de Gestión de Retiros
+ */
+
+/* Búsqueda de solicitantes */
+#busqueda-solicitante {
+    font-size: 1.1rem;
+    padding: 12px;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+#busqueda-solicitante:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+#resultados-busqueda {
+    position: absolute;
+    z-index: 1000;
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+}
+
+#resultados-busqueda .list-group-item {
+    border-left: none;
+    border-right: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#resultados-busqueda .list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+#resultados-busqueda .list-group-item:first-child {
+    border-top: none;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+#resultados-busqueda .list-group-item:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* Información del solicitante */
+#info-solicitante .card {
+    border-left: 4px solid #007bff;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Badges personalizados */
+.badge {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+}
+
+/* Botones mejorados */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Cards del dashboard */
+.card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Tablas mejoradas */
+.table {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.table thead th {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Alertas personalizadas */
+.alert {
+    border-left: 4px solid;
+    border-radius: 8px;
+}
+
+.alert-success {
+    border-left-color: #28a745;
+}
+
+.alert-warning {
+    border-left-color: #ffc107;
+}
+
+.alert-danger {
+    border-left-color: #dc3545;
+}
+
+.alert-info {
+    border-left-color: #17a2b8;
+}
+
+/* Formularios mejorados */
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+/* Spinner de carga */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 0.15em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #resultados-busqueda {
+        max-height: 300px;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .table {
+        font-size: 0.9rem;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+/* Estados visuales */
+.estado-completo {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.estado-incompleto {
+    color: #ffc107;
+    font-weight: bold;
+}
+
+.estado-pendiente {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Iconos */
+.fas, .far {
+    margin-right: 5px;
+}
+
+/* Tooltips personalizados */
+[title] {
+    cursor: help;
+}
+
+/* Mejoras de accesibilidad */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-overlay .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}

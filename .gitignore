@@ -5,6 +5,10 @@ __pycache__/
 .env
 db.sqlite3  # No subas la BD local
 
+# Logs
+logs/
+*.log
+
 # Virtualenv
 venv/
 env/
@@ -12,3 +16,7 @@ env/
 # IDE
 .vscode/settings.json
 .idea/
+
+# Static files
+staticfiles/
+media/

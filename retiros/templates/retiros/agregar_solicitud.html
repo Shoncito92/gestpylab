@@ -2,22 +2,183 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Solicitud - GestPyLab</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% load static %}
     {% load crispy_forms_tags %}
+    <link rel="stylesheet" href="{% static 'retiros/css/styles.css' %}">
 </head>
 <body class="container mt-4">
-    <h1>Agregar Nueva Solicitud de Retiro</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit" class="btn btn-primary">Guardar Solicitud</button>
-        <a href="{% url 'lista_pendientes' %}" class="btn btn-secondary">Ver Pendientes</a>
-    </form>
+    <!-- Navegación -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="fas fa-home"></i> Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Agregar Solicitud</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">
+                <i class="fas fa-plus-circle text-primary"></i> 
+                Agregar Nueva Solicitud de Retiro
+            </h1>
+        </div>
+    </div>
+
+    <!-- Mensajes -->
     {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success mt-3">{{ message }}</div>
-        {% endfor %}
+        <div class="row">
+            <div class="col-12">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     {% endif %}
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-file-alt"></i> Formulario de Solicitud</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" id="form-solicitud">
+                        {% csrf_token %}
+                        
+                        <!-- Búsqueda de Solicitante -->
+                        <div class="mb-4">
+                            <label for="busqueda-solicitante" class="form-label">
+                                <i class="fas fa-search"></i> Buscar Solicitante
+                            </label>
+                            <div class="position-relative">
+                                <input 
+                                    type="text" 
+                                    class="form-control" 
+                                    id="busqueda-solicitante" 
+                                    placeholder="Escriba nombre, email, teléfono o dirección..."
+                                    autocomplete="off"
+                                >
+                                <div id="resultados-busqueda" class="list-group" style="display: none;"></div>
+                            </div>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Ingrese al menos 2 caracteres para buscar. También puede seleccionar directamente del menú desplegable abajo.
+                            </small>
+                        </div>
+
+                        <!-- Información del solicitante seleccionado -->
+                        <div id="info-solicitante"></div>
+
+                        <!-- Formulario original (oculto pero funcional) -->
+                        <div class="mb-3">
+                            {{ form.solicitante|as_crispy_field }}
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Dirección de Retiro -->
+                        <div class="mb-3">
+                            <div class="form-check mb-2">
+                                {{ form.usar_direccion_solicitante }}
+                                <label class="form-check-label" for="{{ form.usar_direccion_solicitante.id_for_label }}">
+                                    <i class="fas fa-map-marker-alt"></i> Usar dirección principal del solicitante
+                                </label>
+                            </div>
+                            {{ form.direccion_retiro|as_crispy_field }}
+                        </div>
+
+                        <!-- Fecha de Retiro -->
+                        <div class="mb-3">
+                            {{ form.fecha_retiro|as_crispy_field }}
+                        </div>
+
+                        <!-- Retirador Asignado (opcional) -->
+                        <div class="mb-3">
+                            {{ form.retirador_asignado|as_crispy_field }}
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> 
+                                Si no selecciona un retirador, se asignará automáticamente según la zona.
+                            </small>
+                        </div>
+
+                        <!-- Notas -->
+                        <div class="mb-3">
+                            {{ form.notas|as_crispy_field }}
+                        </div>
+
+                        <!-- Estado (oculto por defecto) -->
+                        <div class="mb-3" style="display: none;">
+                            {{ form.estado|as_crispy_field }}
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'home' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <a href="{% url 'lista_pendientes' %}" class="btn btn-info">
+                                <i class="fas fa-list"></i> Ver Pendientes
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Solicitud
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de ayuda -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0"><i class="fas fa-question-circle"></i> Ayuda</h6>
+                </div>
+                <div class="card-body">
+                    <h6>¿Cómo usar la búsqueda?</h6>
+                    <ul class="small">
+                        <li>Escriba el nombre del solicitante</li>
+                        <li>También puede buscar por email o teléfono</li>
+                        <li>Los resultados aparecerán automáticamente</li>
+                        <li>Haga clic en un resultado para seleccionarlo</li>
+                    </ul>
+                    
+                    <hr>
+                    
+                    <h6>Información importante</h6>
+                    <ul class="small">
+                        <li><span class="badge bg-success">✓ Completo</span> = Todos los datos disponibles</li>
+                        <li><span class="badge bg-warning">⚠ Incompleto</span> = Faltan datos (email o dirección)</li>
+                        <li>La dirección se autocompletará si está disponible</li>
+                        <li>El retirador se asigna automáticamente por zona</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="fas fa-clock"></i> Horario</h6>
+                </div>
+                <div class="card-body">
+                    <p class="small mb-0">
+                        <strong>Horario de agendamiento:</strong><br>
+                        Lunes a Viernes<br>
+                        11:00 - 14:00 hrs
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'retiros/js/busqueda_solicitante.js' %}"></script>
 </body>
 </html>

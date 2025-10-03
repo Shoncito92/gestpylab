@@ -2,30 +2,141 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendientes - {{ hoy }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'retiros/css/styles.css' %}">
 </head>
 <body class="container mt-4">
-    <h1>Solicitudes Pendientes para {{ hoy }}</h1>
-    <a href="{% url 'agregar_solicitud' %}" class="btn btn-success mb-3">Agregar Nueva</a>
-    {% if pendientes %}
-        <table class="table table-striped">
-            <thead><tr><th>Solicitante</th><th>Dirección</th><th>Fecha Retiro</th><th>Estado</th><th>Retirador</th><th>Notas</th></tr></thead>
-            <tbody>
-                {% for sol in pendientes %}
-                    <tr>
-                        <td>{{ sol.solicitante.nombre }}</td>
-                        <td>{{ sol.direccion_retiro|truncatechars:30 }}</td>
-                        <td>{{ sol.fecha_retiro }}</td>
-                        <td><span class="badge bg-{% if sol.estado == 'pendiente' %}warning{% else %}info{% endif %}">{{ sol.estado }}</span></td>
-                        <td>{{ sol.retirador_asignado|default:"Pendiente de asignar" }}</td>
-                        <td>{{ sol.notas|truncatechars:20 }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No hay pendientes hoy. ¡Buen trabajo!</p>
+    <!-- Navegación -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="fas fa-home"></i> Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Pendientes</li>
+        </ol>
+    </nav>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>
+                <i class="fas fa-clock text-warning"></i> 
+                Solicitudes Pendientes
+            </h1>
+            <p class="text-muted">
+                <i class="fas fa-calendar"></i> {{ hoy|date:"d/m/Y" }} | 
+                <i class="fas fa-list"></i> Total: {{ total }}
+            </p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'agregar_solicitud' %}" class="btn btn-success mb-2">
+                <i class="fas fa-plus"></i> Agregar Nueva
+            </a>
+            {% if pendientes %}
+                <a href="{% url 'exportar_pdf_general' %}" class="btn btn-danger mb-2" target="_blank">
+                    <i class="fas fa-file-pdf"></i> Exportar PDF
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Mensajes -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
     {% endif %}
+
+    {% if pendientes %}
+        <div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Solicitudes Pendientes ({{ total }})
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Solicitante</th>
+                                <th>Tipo</th>
+                                <th>Dirección</th>
+                                <th>Zona</th>
+                                <th>Estado</th>
+                                <th>Retirador</th>
+                                <th>Notas</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sol in pendientes %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ sol.solicitante.nombre }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ sol.solicitante.get_tipo_display }}</span>
+                                    </td>
+                                    <td>
+                                        <small>{{ sol.direccion_retiro|truncatechars:40 }}</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ sol.solicitante.zona.nombre }}</span>
+                                    </td>
+                                    <td>
+                                        {% if sol.estado == 'pendiente' %}
+                                            <span class="badge bg-warning">Pendiente</span>
+                                        {% elif sol.estado == 'asignado' %}
+                                            <span class="badge bg-info">Asignado</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if sol.retirador_asignado %}
+                                            <a href="{% url 'lista_retirador' sol.retirador_asignado.id %}" class="text-decoration-none">
+                                                {{ sol.retirador_asignado.nombre }}
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">Sin asignar</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <small>{{ sol.notas|truncatechars:25|default:"Sin notas" }}</small>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'marcar_completado' sol.id %}" 
+                                           class="btn btn-sm btn-success" 
+                                           title="Marcar como completado">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                <i class="fas fa-info-circle"></i> 
+                Total de solicitudes pendientes: <strong>{{ total }}</strong>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-success text-center">
+            <i class="fas fa-check-circle fa-3x mb-3"></i>
+            <h4>¡Excelente trabajo!</h4>
+            <p>No hay solicitudes pendientes para hoy.</p>
+            <a href="{% url 'agregar_solicitud' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Agregar Nueva Solicitud
+            </a>
+        </div>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
